@@ -26,9 +26,14 @@ git status
 git push -u origin main
 # pushes your local commits to GitHub and links (-u) main with origin/main
 # so future git push/git pull work automatically
+```
 
+## Verification
+
+```bash
 git remote -v
 # lists remotes (you should see origin with your repo URL)
 
 git log --oneline --decorate --graph --all
 # quick visual history to confirm commits exist and point to main
+```
