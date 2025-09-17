@@ -13,16 +13,21 @@ ADRs help new team members quickly understand the system's history and the ratio
 Date: YYYY-MM-DD
 
 ## Context
-What is the problem or decision context?
+Briefly describe the problem, constraints, and forces.
 
 ## Decision
-What is decided?
+State the decision clearly.
 
 ## Consequences
 - Positive:
 - Negative:
+- Trade-Offs:
 - Follow-ups:
 
 ## Alternatives Considered
-- Option A – …
-- Option B – …
+- Option A – pros/cons…
+- Option B – pros/cons…
+
+## References
+Links or related docs/issues.
+
