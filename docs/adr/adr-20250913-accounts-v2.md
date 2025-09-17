@@ -3,21 +3,23 @@
 - **Date:** 2025-09-13
 
 ## Context
-Legacy `clients` plus `learners/guardians` created redundancy and unclear ownership.
+Legacy model split “client” (billing) and “learner” (student). Real-world use shows one stable business identifier (account_code) is used for both billing and learning identity, including family and institution cases.
 
 ## Decision
-- Use `accounts_v2` as the canonical account entity.
-- Contacts carry roles; no separate learners/guardians tables.
-- Keep `learners` as comma-separated text for now (pragmatic).
+- Introduce `accounts_v2` as the unified billing/learner entity.
+- Keep contacts in `account_contacts`.
+- Store learner labels in `account_learners` for simple grouping.
+- Migrate LIP tables to use `account_code`.
 
 ## Consequences
-- Positive: simpler joins, clearer ownership, faster delivery.
-- Negative: learners text is non-normalized; future parsing may be needed.
-- Trade-off: defers full normalization to later milestones.
+- Simpler mental model; fewer tables.
+- Historical invoice numbers remain valid (codes unchanged).
+- Need migration for cycles/invoices/payments.
 
 ## Alternatives
-- Keep legacy tables (complex, redundant).
-- Fully normalized learners/guardians (slower initial delivery).
+- Normalize persons/organizations separately → too heavy for current scale.
+- Keep legacy clients/learners → caused ambiguity and duplication.
 
 ## References
 - `docs/db-design.md`
+
