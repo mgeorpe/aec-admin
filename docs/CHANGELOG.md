@@ -26,3 +26,6 @@ _All notable changes to this project will be documented here._
 - **Data:** updated service for `004 Maxime Orpel` from `PW` → `LE`
 - **Seeds:** added contacts for key accounts
 - **Docs:** set up `docs/adr/` with first ADR (`accounts_v2` decision)
+
+## 2025-09-04
+- Inception. Drafts. Initial schemas. No documentations
