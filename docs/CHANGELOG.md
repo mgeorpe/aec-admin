@@ -3,12 +3,31 @@
 _All notable changes to this project will be documented here._
 
 ## [Unreleased]
+
 - Planned: Migrate `learning_cycles`, `invoices`, `payments` to use `account_code`
 - Planned: Add `v_invoice_settlements` rollup view
 - Planned: Add `updated_at` trigger to `accounts_v2` and other core tables
 
-## 2025-09-17
+## 2025-09-20
+
 ### Added
+
+- New docs: “Initial Steps”, “Folder Structure”, “Git Workflows”, “AEC-Admin Local Setup Macbook”.
+
+### Housekeeping
+
+- Linked README to Git Workflows.
+- Prepared SQL directory placeholders for migrations/seeds/sanity (no DDL yet).
+
+### Next
+
+- Resume DB work: add status guard, `updated_at` trigger, `v_accounts_summary` (implement after sanity validation).
+- Add sanity query templates after core objects exist.
+
+## 2025-09-17
+
+### Added
+
 - **Database design (v3):**
   - Refined `accounts_v2` schema (column table, guards, status logic)
   - Added explicit sanity policy (nulls, duplicates, mapping, domains, status logic)
@@ -16,11 +35,14 @@ _All notable changes to this project will be documented here._
 - **Clarified:** services domain (`TF`, `CD`, `PW`, `LE`) and staging approach
 
 ### Housekeeping
+
 - Improved structure of `db-design.md` for readability
 - Confirmed ADR for `accounts_v2` is **Accepted**
 
 ## 2025-09-13
+
 ### Established
+
 - **Core schema:** created `accounts_v2`, `account_contacts`, `account_learners`
 - **Guards:** service enum, start_year lower/upper bounds, status→is_active inference
 - **Data:** updated service for `004 Maxime Orpel` from `PW` → `LE`
@@ -28,4 +50,5 @@ _All notable changes to this project will be documented here._
 - **Docs:** set up `docs/adr/` with first ADR (`accounts_v2` decision)
 
 ## 2025-09-04
+
 - Inception. Drafts. Initial schemas. No documentations
