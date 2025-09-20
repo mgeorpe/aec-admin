@@ -8,6 +8,16 @@ _All notable changes to this project will be documented here._
 - Planned: Add `v_invoice_settlements` rollup view
 - Planned: Add `updated_at` trigger to `accounts_v2` and other core tables
 
+## 2025-09-21
+
+### Added
+
+- Status guard on `accounts_v2` (`chk_accounts_v2_status_logic`) via conditional migration.
+
+### Validation
+
+- Constraint validated successfully; no data changes required.
+
 ## 2025-09-20
 
 ### Added
