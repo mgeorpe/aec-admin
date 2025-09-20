@@ -1,0 +1,42 @@
+AEC Development Notes DONE Sep 20 2025
+
+1. Changelog.md - Updated Sep-20
+2. README.md - Added one linker link to Git Workflows
+3. Created SQL placeholders folders and files -- no scripts
+4. VSCode Colorful Terminal
+   a. Prompt [mng@iscs-mac aec-admin %]
+   b. Command [e.g. git status]
+   c. Output 
+5. Annoying Passphrase to Git
+6. Git Aliases
+   a. git config --global alias.st status
+   b. git config --global alias.cmt commit
+   c. git config --global alias.lg "log --oneline --graph --decorate --all"
+7. Schema Inventory
+   a. Constraints present: PK, service check, start_year range, status check, type check, FK on country.
+   b. Trigger present: enforces upper bound for start_year.   
+8. Data Integrity 
+   a. Data integrity is clean.
+   b. Safe to add a status guard constraint later if you want the DB to enforce it. No fixes required.
+   c. Service values all valid (TF/CD/PW/LE).
+   d. Years all within allowed bounds.
+   e. Required columns all populated.
+   f. Status logic already clean.
+9. Guardrail for accounts_v2
+   “From now on, only allow rows in accounts_v2 where the status, start_year, and is_active columns match the rules we agreed on.” Example:
+      If status = prospect → start_year must be empty and is_active = false.
+      If status = active → start_year must have a value and is_active = true.
+      If status = inactive → is_active must be false (regardless of start_year).
+
+    -- Add as NOT VALID to avoid full-table check during DDL
+	ALTER TABLE public.accounts_v2
+	ADD CONSTRAINT chk_accounts_v2_status_logic
+	CHECK (
+  	(status = 'prospect' AND start_year IS NULL AND is_active = false) OR
+  	(status = 'active'   AND start_year IS NOT NULL AND is_active = true ) OR
+  	(status = 'inactive' AND is_active = false)
+	) NOT VALID;
+
+	-- Validate afterwards (will scan rows); do this during a calm moment
+	ALTER TABLE public.accounts_v2
+	VALIDATE CONSTRAINT chk_accounts_v2_status_logic;

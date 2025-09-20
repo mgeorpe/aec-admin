@@ -1,0 +1,128 @@
+AEC Development Notes
+
+
+## ALIGNMENT ##
+Okay time to reflect back and realign.
+What were the macro goals again? 
+What have we achieved? 
+What should be our micro steps? 
+
+## COMMIT ##
+Okay I guess its time to document them in github.
+I need step by step guidance on proper folder/file naming, proper commit messages.
+Also if applicable: changelog, readme, etc.
+
+
+## ??? ##
+Do we need to do sanity checks (structural validation, data integrity)? 
+What did we forget or missed? 
+What were the macro goals again? 
+What should be our micro steps? 
+Can I see an updated documentation please so I can commit it in my github for tracking? 
+What should I put in the changelog?
+
+
+-----------------------
+-- Reflect Sep 20 745pm [webdev]
+-----------------------
+Okay time to reflect back.
+I am done with Local Setup in my macbook for about a day started yesterday since my Windows laptop is in repair center.
+
+What have we achieved prior to my local macbook setup?
+What were the macro goals? 
+
+Ignore this questions if not applicable:
+Do we need to do sanity checks (structural validation, data integrity)? 
+What did we forget or missed? 
+What should be our micro steps? 
+Can I see an updated documentation please so I can commit it in my github for tracking? 
+What should I put in the changelog?
+
+
+-----------------------
+-- Reflect Sep 20 757pm [webdev]
+-----------------------
+When i ask for an alignment, wait for my confirmation before making your responses long, that is why it is called alignment. That way, me scrolling up will not be tedious.
+
+Also, I already added this docs before I asked you the alignment question and break some of them down and added many more:
+1 Initial Steps
+2 Folder Structure
+3 Git Workflows
+AEC-Admin Local Setup Macbook
+CHANGELOG.md
+db-design.md
+
+So..
+
+Maybe we can add a changelog and the one liner link
+
+Then maybe we can resume work for the sql stuff (placeholder only). I dont want to document DDL or any other sql script if we still working on them. Kinda pointless. I will say when to do them when I validated all of the sanity in DB and if we wire them in UI.
+
+Then maybe we can resume the DB work.
+
+What do you think?
+
+
+-----------------------
+-- Color Coding [git setup]
+-----------------------
+in my vscode, I think we make it look like homebew. how can i make my terminal such that my commands and outputs are easily distinguishable. For example if my command is green, the output should have a different color.
+
+
+-----------------------
+-- Annoying Passphrase [git setup]
+-----------------------
+i observed that everytime i push, it asked for passphrase.. kinda annoying, i thought setting up the ssh is one time and the agent auto runs every time i typed a passphrase
+
+hey before you give  this  code "ssh-add --apple-use-keychain ~/.ssh/id_ed25519"
+
+
+-------------------------
+-- Git Aliases [git setup]
+-------------------------
+i want aliases. some commands are too long
+commit -> i want something like git cmt
+status -> i want something like git st
+i know we've setup something about fancy logline in another chat, can we do that here
+
+
+-----------------------
+-- Reflect Sep 20 1130pm [wedev]
+-----------------------
+I actually dont know what status guard on accounts_v2 is..
+Lets say Ill say yes, can we do checks first. Because there might be some thing in place already right?
+
+
+
+
+
+-------------------------
+-- 
+-------------------------
+
+📌 Micro Steps (next focus)
+1. SQL placeholders housekeeping
+   Ensure .keep files in sql/migrations/, sql/seeds/, sql/sanity/ are in repo.
+2. updated_at trigger
+   Add a general-purpose trigger function + hook to accounts_v2 (and reuse later).
+3. Rollup view
+   Draft v_accounts_summary to simplify sanity + UI wiring.
+4. Sanity query set
+   Save the queries you already ran (nulls, dupes, mapping, domains, status logic, year bounds) into sql/sanity/ as reusable scripts.
+5. Prepare seeds
+   Minimal trusted seeds for accounts_v2 and account_contacts (idempotent inserts).
+
+Why did you put "SQL placeholders housekeeping"?
+We just did that earlier. it is already in the repo.
+By the way, what is the purpose of ".keep" file?
+
+
+
+
+
+
+
+
+
+
+
