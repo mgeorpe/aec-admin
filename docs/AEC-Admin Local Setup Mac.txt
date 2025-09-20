@@ -1,0 +1,38 @@
+AEC LOCAL SETUP in MAC
+
+############
+## Shortcuts
+############
+Window
+
+#########
+## Goals
+#########
+1. Terminal — DONE
+2. Command Line Tools — DONE
+3. Homebrew (package manager)  — DONE
+4. Sublime -- DONE
+5. VS Code + Window Shortcuts -- DONE
+   VS Code Settings
+   Screenshotting
+   Copy Paste
+   Alt Tab
+   Karabiner cleanup 
+   Prettier -- DONE
+6. Git -- DONE
+7. Retry reconfig mouse volume up and down -- DONE CANT
+8. Node LTS -- DONE
+9. GitHub access -- DONE
+10. Clone aec-admin  -- DONE
+11. Install deps -- DONE
+12. Run locally -- DONE
+
+13. Software Update -- IN PROGRESS
+what is macos tahoe	26
+how far my current os ventura 13.4 with that?
+it is a 12GB update? how can i know if i have that space?
+how long this software update will take?
+
+
+
+
