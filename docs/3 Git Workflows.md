@@ -123,14 +123,46 @@ git push (first time: git push -u origin <branch>)
 
 ## 5. Git Pushing Workflow
 
+### Shortcut (All in one Version)
+
+```bash
+git acp <commit message> #combines add all (add -A), commit -m, and push origin main while accepting a custom commit message
+```
+
+### Long Version
+
 ```bash
 git status
 
-git add -A ##Adds new + modified + deleted files across the entire repo, no matter where you are.
+git aa
+   # "git add -A" (git aa) #Adds new + modified + deleted files across the entire repo, no matter where you are.
    # "git add ." -> #Adds new + modified + deleted files only in the current directory and its subfolders.
 
 git commit -m "<type>: Useful commit message"
-   # type = docs, schema, bugfix, hotfix (urgent), spike (experiment)
+   # type = docs, schema, sanity, bugfix, hotfix (urgent), spike (experiment)
 
 git push origin main #SHORTCUT: git pom
+```
+
+## 6. Commit Message Prefixes
+
+- **feat** → a new feature (UI, DB, API, etc.)
+- **refactor** → code restructure without behavior change
+- **test** → test-related changes
+- **bugfix** → same as `fix` (kept for clarity in non-tech contexts)
+- **hotfix** → urgent production fix (fast patch)
+- **spike** → experimental / proof-of-concept work
+- **schema** → database schema migrations / constraints
+- **sanity** → sanity queries, validations, guards
+- **docs** → documentation, notes
+- **devops** → maintenance (configs, tooling, deps, CI/CD)
+
+## 7. Other Commands
+
+```bash
+git config --list #see all your Git configs (aliases plus other settings)
+
+git config --get-regexp alias #list all your configured Git aliases
+
+git config --global pager.log false #ensure git log to never open in a pager (well if you stuck, press q)
 ```
