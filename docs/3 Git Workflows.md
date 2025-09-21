@@ -128,5 +128,5 @@ git status
 git add .
 git commit -m "<type>: Useful commit message"
    # type = docs, schema, bugfix, hotfix (urgent), spike (experiment)
-git push origin main
+git push origin main #SHORTCUT: git pom
 ```
