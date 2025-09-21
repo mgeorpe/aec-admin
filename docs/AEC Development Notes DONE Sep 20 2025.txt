@@ -47,14 +47,22 @@ AEC Development Notes DONE Sep 20 2025
       --> sql/seeds/.keep → placeholder until you add seed files.
       --> sql/sanity/.keep → placeholder until you add sanity query scripts.
     This way, everyone cloning your repo gets the full folder structure, even before any SQL exists.
+
+#########################################
+## AEC Development Notes DONE Sep 21 2025
+#########################################
+
 11. updated_at trigger - A general-purpose trigger function + hook to accounts_v2 (and reuse later).
 12. v_accounts_summary roll up view - A simple rollup view on accounts_v2 so you can quickly see key columns. Useful for sanity checks and for UI lists later.
-13. Sanity Query set
+13. Sanity Query set - Reusable sanity queries for `accounts_v2` and `account_contacts` under `sql/sanity/`.
+14. Git Workflows - improved workflow:: acp (add, commit, push) commit prefixes, 
+15. Document the View (v_accounts_summary) under Views
+16. Reflect and Realignment for next steps
 
 
-
-
-
+#########################################
+## AEC Development Notes DONE Sep 22 2025
+#########################################
 
 
 

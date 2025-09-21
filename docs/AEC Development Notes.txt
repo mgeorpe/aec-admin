@@ -169,42 +169,57 @@ Concise and very straightforward. I like those plain english thing. It reduces m
 Can you adapt these styles and please regenerate your previous response?
 
 
+-------------------------
+-- verification realignment sep 22 2025 1:15am
+-------------------------
+Why you even write the DB confirm current state and say already ok or exists and verified. Plus we already just did that a while ago.
+
+So the next steps you recommend are seeds?
+
+I have reviewed another recommendation of you earlier that says something like "Draft ADR for updated_at guard + sanity framework (optional, but good for memory)." May I ask where does that fall in our "logical steps"?
 
 
 
 
 -------------------------
--- 📌 Micro Steps (next focus) -- Sep 22-2025 12:31am
+-- 🎯 Macro Goals  -- Sep 22-2025 1:15am
 -------------------------
-1. Document the view
-   Add v_accounts_summary into db-design.md (Views section).
-   Log it in CHANGELOG.md.
-
-2. Seed prep
-   Start building trusted seeds for accounts_v2 and account_contacts (idempotent inserts).
-
-3. Expand views
-   Plan for v_invoice_settlements (rollup for later billing).
-
-4. ADR check
-   Draft ADR for updated_at guard + sanity framework (optional, but good for memory).
+1. Database Foundation - stable schema, rules/guards
+2. Sanity & observability - reusable sanity SQL, simple rollup views
+3. Documentation Discipline - Keep db-design.md, ADRs, and CHANGELOG.md in sync with actual DB state.
+4. Seed Trustworthy Data - Establish small, idempotent seeds for accounts_v2 and account_contacts.
+5. Access & security (later) - Introduce RLS/policies after schema + seeds stabilize.
+6. UI wiring - Use the rollup views + clean data to wire the Next.js UI with confidence.
 
 
 -------------------------
--- Things to check from "AEC Dev Previous Chat"
+-- 📌 Micro Steps (next focus) -- Sep 22-2025 1:15am
 -------------------------
-1. Document SQL Core Tables (create, index, trigger)
-2. Staqging
-3. Rollup view for UI and QA
-4. Supabase RLS
+1. DB: Confirm current state (quick)
+- Constraints: service/status/type/year; status guard; FK(country) — already OK.
+- Triggers: updated_at — already OK.
+- View: v_accounts_summary — exists and verified.
+- Is it good do this now or no? -> Draft ADR for updated_at guard + sanity framework (optional, but good for memory).
+
+2. Seeds: Add minimal, idempotent inserts
+- sql/seeds/accounts_v2_seed.sql → INSERT … WHERE NOT EXISTS by account_code.
+- sql/seeds/account_contacts_seed.sql → INSERT … WHERE NOT EXISTS by (account_code, full_name, role).
+- Re-run sanity scripts after seeding.
+
+3. Docs: Update changelog only after seeds succeed
+- Append “Seeds added (accounts, contacts) and sanity re-check passed.”
+
+4. (Optional next) Views: Enrich v_accounts_summary
+- Add derived fields only if rules are clear (e.g., pick a primary contact rule).
+- Plan for v_invoice_settlements (rollup for later billing).
+
+5. (Later) RLS
+- Enable RLS and add minimal read policy once UI fetch paths are known.
 
 
 -------------------------
--- Document the View
+-- ???
 -------------------------
-
-
-
 
 
 
