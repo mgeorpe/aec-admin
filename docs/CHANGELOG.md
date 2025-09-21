@@ -8,6 +8,13 @@ _All notable changes to this project will be documented here._
 - Planned: Add `v_invoice_settlements` rollup view
 - Planned: Add `updated_at` trigger to `accounts_v2` and other core tables
 
+## 2025-09-22
+
+### Docs
+
+- Documented `v_accounts_summary` under new “Views” section in `db-design.md`.
+  - Clarified that Sep-20 entry marked it as planned, Sep-21 was actual implementation.
+
 ## 2025-09-21
 
 ### Added
@@ -16,6 +23,7 @@ _All notable changes to this project will be documented here._
 - `updated_at` column on `accounts_v2` (default now).
 - Trigger `trg_accounts_v2_updated_at` using `public.set_updated_at()`.
 - Added reusable sanity queries for `accounts_v2` and `account_contacts` under `sql/sanity/`.
+- Implemented view `v_accounts_summary` on `accounts_v2` for rollups and sanity/UI checks.
 
 ### Data
 

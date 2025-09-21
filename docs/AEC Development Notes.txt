@@ -174,15 +174,36 @@ Can you adapt these styles and please regenerate your previous response?
 
 
 -------------------------
--- 📌 Micro Steps (next focus) -- Sep 21-2025 12:24am
+-- 📌 Micro Steps (next focus) -- Sep 22-2025 12:31am
 -------------------------
-5. Prepare seeds
-   Minimal trusted seeds for accounts_v2 and account_contacts (idempotent inserts).
+1. Document the view
+   Add v_accounts_summary into db-design.md (Views section).
+   Log it in CHANGELOG.md.
+
+2. Seed prep
+   Start building trusted seeds for accounts_v2 and account_contacts (idempotent inserts).
+
+3. Expand views
+   Plan for v_invoice_settlements (rollup for later billing).
+
+4. ADR check
+   Draft ADR for updated_at guard + sanity framework (optional, but good for memory).
 
 
 -------------------------
--- Sanity Query Set
+-- Things to check from "AEC Dev Previous Chat"
 -------------------------
+1. Document SQL Core Tables (create, index, trigger)
+2. Staqging
+3. Rollup view for UI and QA
+4. Supabase RLS
+
+
+-------------------------
+-- Document the View
+-------------------------
+
+
 
 
 

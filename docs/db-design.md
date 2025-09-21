@@ -74,6 +74,17 @@ Use only when granular learner grouping is needed.
 
 ---
 
+## Views
+
+### v_accounts_summary
+
+- **Purpose:** simple rollup for UI lists and sanity checks.
+- **Columns:** account_code, account_name, type, service, country, status, is_active, start_year, created_at, updated_at
+- **Order:** account_code
+- **Notes:** Extend later when UI needs more fields.
+
+---
+
 ## Planned Migrations (LIP)
 
 - Migrate `learning_cycles`, `invoices`, `payments` to use `account_code`.
