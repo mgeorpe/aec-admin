@@ -105,23 +105,82 @@ Couple of comments from your behavior
 3. With all that being said, after you digested my #1 and #2 comments and gave proper responses. I want the clear instructions on how to document this in github. While file to create, where to create it, what content to paste, commit message, etc.
 
 
+-----------------------
+-- v_accounts_summary roll up view
+   Draft v_accounts_summary to simplify sanity + UI wiring.
+-----------------------
+--1
+Success. But before we proceed I noticed that the updated_at are all sep-21. Pretty crazy that we only tested account code 001 earlier. There might be some funny shit going on here.
+
+--2
+Still doesnt work.
+Can I suggest something.
+Can we make all updated_at sep-11 (this is the date of created at: 2025-09-11 16:06:28.898529+00)
+Then, we can do a test to check if updated_at works well by updating one account 001.
+Can we do this approach.
+
+--3
+Comment 1: i already said my preferred workflow yet you keep returning back to your old behavior which is pretty annoying. I thought GPT-5 has stronger reasoning.  
+
+Comment 2: Your response in this should stick with [a] run this and then [b] verify... then your recommendation should be [c] do you want to test the trigger .... then once those triggers are fully tested/approved then the [d] docs can follow.
+
+Enough with Ranting..
+
+i run this
+
+UPDATE public.accounts_v2
+SET updated_at = TIMESTAMPTZ '2025-09-11 16:06:28.898529+00';
+
+and then this
+
+SELECT DISTINCT updated_at::date, COUNT(*)
+FROM public.accounts_v2
+GROUP BY 1;
+
+and then got this
+
+[
+  {
+    "updated_at": "2025-09-21",
+    "count": 33
+  }
+]
+
+WHY IS IT STILL 09-21??
+
+
+
 
 -------------------------
 -- 📌 Micro Steps (next focus) -- Sep 21-2025 12:24am
 -------------------------
-3. Rollup view
-   Draft v_accounts_summary to simplify sanity + UI wiring.
 4. Sanity query set
    Save the queries you already ran (nulls, dupes, mapping, domains, status logic, year bounds) into sql/sanity/ as reusable scripts.
 5. Prepare seeds
    Minimal trusted seeds for accounts_v2 and account_contacts (idempotent inserts).
 
 
-
 -------------------------
--- updated_at trigger
+-- v_accounts_summary roll up view
+   Draft v_accounts_summary to simplify sanity + UI wiring.
 -------------------------
 
+Purpose: A simple rollup view on accounts_v2 so you can quickly see key columns. Useful for sanity checks and for UI lists later.
+
+CREATE OR REPLACE VIEW public.v_accounts_summary AS
+SELECT
+  a.account_code,
+  a.account_name,
+  a.type,
+  a.service,
+  a.country,
+  a.status,
+  a.is_active,
+  a.start_year,
+  a.created_at,
+  a.updated_at
+FROM public.accounts_v2 a
+ORDER BY a.account_code;
 
 
 
@@ -132,11 +191,4 @@ Couple of comments from your behavior
 
 
 
-
-
-
-
-
-
-
-
+doc + changelog + migration file instructions.

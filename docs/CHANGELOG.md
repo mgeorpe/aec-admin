@@ -13,10 +13,21 @@ _All notable changes to this project will be documented here._
 ### Added
 
 - Status guard on `accounts_v2` (`chk_accounts_v2_status_logic`) via conditional migration.
+- `updated_at` column on `accounts_v2` (default now).
+- Trigger `trg_accounts_v2_updated_at` using `public.set_updated_at()`.
+
+### Data
+
+- Backfilled all `updated_at` to the initial import timestamp `2025-09-11 16:06:28.898529+00`.
 
 ### Validation
 
-- Constraint validated successfully; no data changes required.
+- Constraint validated (status logic) successfully; no data changes required.
+- Verified trigger by updating account `001` (timestamp advanced; others remained at Sep-11).
+
+### Notes
+
+- Trigger was temporarily disabled during backfill, then re-enabled.
 
 ## 2025-09-20
 

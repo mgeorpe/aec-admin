@@ -37,7 +37,7 @@ Represents a billing entity and its learner identity (individual or institution)
   - `active` ⇒ `start_year IS NOT NULL` and `is_active=true`
   - `inactive` ⇒ `is_active=false`
   - Added & validated on **2025-09-21**.
-- **Updated At Trigger:** (trg_accounts_v2_updated_at) calls public.set_updated_at() on every UPDATE. Added 2025-09-21.
+- **`updated_at` trigger** (`trg_accounts_v2_updated_at`) calls `public.set_updated_at()` on every UPDATE; baseline set to `2025-09-11 16:06:28.898529+00` on 2025-09-21, then verified via account `001`.
 
 ---
 
