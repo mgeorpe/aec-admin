@@ -186,7 +186,7 @@ I have reviewed another recommendation of you earlier that says something like "
 -------------------------
 1. Database Foundation - stable schema, rules/guards
 2. Sanity & observability - reusable sanity SQL, simple rollup views
-3. Documentation Discipline - Keep db-design.md, ADRs, and CHANGELOG.md in sync with actual DB state.
+3. Documentation Discipline - Keep db-design.md, ADRs, and CHANGELOG.md in sync with actual DB state. ADR are documenbted only after a rule is implemented and validated. The ADR records the decision, not the intent.
 4. Seed Trustworthy Data - Establish small, idempotent seeds for accounts_v2 and account_contacts.
 5. Access & security (later) - Introduce RLS/policies after schema + seeds stabilize.
 6. UI wiring - Use the rollup views + clean data to wire the Next.js UI with confidence.
@@ -195,16 +195,16 @@ I have reviewed another recommendation of you earlier that says something like "
 -------------------------
 -- 📌 Micro Steps (next focus) -- Sep 22-2025 1:15am
 -------------------------
-1. DB: Confirm current state (quick)
-- Constraints: service/status/type/year; status guard; FK(country) — already OK.
-- Triggers: updated_at — already OK.
-- View: v_accounts_summary — exists and verified.
-- Is it good do this now or no? -> Draft ADR for updated_at guard + sanity framework (optional, but good for memory).
+1. Seeds: Add minimal, idempotent inserts
+ - sql/seeds/accounts_v2_seed.sql (idempotent by account_code)
+ - sql/seeds/account_contacts_seed.sql (idempotent by (account_code, full_name, role))
+ - Re-run sanity scripts.
 
-2. Seeds: Add minimal, idempotent inserts
-- sql/seeds/accounts_v2_seed.sql → INSERT … WHERE NOT EXISTS by account_code.
-- sql/seeds/account_contacts_seed.sql → INSERT … WHERE NOT EXISTS by (account_code, full_name, role).
-- Re-run sanity scripts after seeding.
+2. ADR (optional, after seeds or now if you prefer docs first)
+ - One ADR covering:
+   - updated_at trigger decision
+   - status-guard constraint decision
+   - sanity-check framework (why + what we check)
 
 3. Docs: Update changelog only after seeds succeed
 - Append “Seeds added (accounts, contacts) and sanity re-check passed.”
