@@ -15,6 +15,7 @@ _All notable changes to this project will be documented here._
 - Status guard on `accounts_v2` (`chk_accounts_v2_status_logic`) via conditional migration.
 - `updated_at` column on `accounts_v2` (default now).
 - Trigger `trg_accounts_v2_updated_at` using `public.set_updated_at()`.
+- Added reusable sanity queries for `accounts_v2` and `account_contacts` under `sql/sanity/`.
 
 ### Data
 

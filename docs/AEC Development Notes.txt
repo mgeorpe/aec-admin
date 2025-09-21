@@ -149,46 +149,44 @@ and then got this
 WHY IS IT STILL 09-21??
 
 
+-----------------------
+-- 4. Sanity query set
+   Save the queries you already ran (nulls, dupes, mapping, domains, status logic, year bounds) into sql/sanity/ as reusable scripts.
+-----------------------
+I really like your style in the previous sanity files.
+You have included somethng like this   
+
+-- Sanity: Updated_at baseline and trigger behavior
+
+-- 1. Check that most rows are still on the Sep-11 baseline
+
+-- 2. Spot rows where updated_at < created_at (should not happen)
+
+-- 3. Spot rows where updated_at is much newer than baseline (expected only for rows you’ve updated)
+
+Concise and very straightforward. I like those plain english thing. It reduces my time to analyze each code on trying to predict what it does. You know, I lean towards being a business person mindset now rather than being "technical".
+
+Can you adapt these styles and please regenerate your previous response?
+
+
+
+
 
 
 -------------------------
 -- 📌 Micro Steps (next focus) -- Sep 21-2025 12:24am
 -------------------------
-4. Sanity query set
-   Save the queries you already ran (nulls, dupes, mapping, domains, status logic, year bounds) into sql/sanity/ as reusable scripts.
 5. Prepare seeds
    Minimal trusted seeds for accounts_v2 and account_contacts (idempotent inserts).
 
 
 -------------------------
--- v_accounts_summary roll up view
-   Draft v_accounts_summary to simplify sanity + UI wiring.
+-- Sanity Query Set
 -------------------------
 
-Purpose: A simple rollup view on accounts_v2 so you can quickly see key columns. Useful for sanity checks and for UI lists later.
-
-CREATE OR REPLACE VIEW public.v_accounts_summary AS
-SELECT
-  a.account_code,
-  a.account_name,
-  a.type,
-  a.service,
-  a.country,
-  a.status,
-  a.is_active,
-  a.start_year,
-  a.created_at,
-  a.updated_at
-FROM public.accounts_v2 a
-ORDER BY a.account_code;
 
 
 
 
 
 
-
-
-
-
-doc + changelog + migration file instructions.

@@ -125,8 +125,12 @@ git push (first time: git push -u origin <branch>)
 
 ```bash
 git status
-git add .
+
+git add -A ##Adds new + modified + deleted files across the entire repo, no matter where you are.
+   # "git add ." -> #Adds new + modified + deleted files only in the current directory and its subfolders.
+
 git commit -m "<type>: Useful commit message"
    # type = docs, schema, bugfix, hotfix (urgent), spike (experiment)
+
 git push origin main #SHORTCUT: git pom
 ```
