@@ -87,24 +87,28 @@ i know we've setup something about fancy logline in another chat, can we do that
 
 
 -----------------------
--- Reflect Sep 20 1130pm [wedev]
+-- Reflect Sep 20 1130pm [webdev]
 -----------------------
 I actually dont know what status guard on accounts_v2 is..
 Lets say Ill say yes, can we do checks first. Because there might be some thing in place already right?
 
 
+-----------------------
+-- Behavior and Flow [webdev]
+-----------------------
+Couple of comments from your behavior
+
+1. When we realign, one of the "next micro steps" was updated_at trigger. My comment here is you didnt include as of your steps to verify if the column exists. With all our conversation revolving around being careful and sanity, I am really disappointed. Please learn from this.
+
+2. The way you write your steps is clunky. Why not try this approach. First we do the necessary database stuff + testing one at a time. After that stuff is done, then thats the only time you recommend if we are ready to document them in github. By approaching it this way, your responses will be shorter and we avoid long scroll ups every time we see an error. 
+
+3. With all that being said, after you digested my #1 and #2 comments and gave proper responses. I want the clear instructions on how to document this in github. While file to create, where to create it, what content to paste, commit message, etc.
 
 
 
 -------------------------
--- 
+-- 📌 Micro Steps (next focus) -- Sep 21-2025 12:24am
 -------------------------
-
-📌 Micro Steps (next focus)
-1. SQL placeholders housekeeping
-   Ensure .keep files in sql/migrations/, sql/seeds/, sql/sanity/ are in repo.
-2. updated_at trigger
-   Add a general-purpose trigger function + hook to accounts_v2 (and reuse later).
 3. Rollup view
    Draft v_accounts_summary to simplify sanity + UI wiring.
 4. Sanity query set
@@ -112,9 +116,19 @@ Lets say Ill say yes, can we do checks first. Because there might be some thing 
 5. Prepare seeds
    Minimal trusted seeds for accounts_v2 and account_contacts (idempotent inserts).
 
-Why did you put "SQL placeholders housekeeping"?
-We just did that earlier. it is already in the repo.
-By the way, what is the purpose of ".keep" file?
+
+
+-------------------------
+-- updated_at trigger
+-------------------------
+
+
+
+
+
+
+
+
 
 
 

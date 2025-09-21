@@ -40,3 +40,28 @@ AEC Development Notes DONE Sep 20 2025
 	-- Validate afterwards (will scan rows); do this during a calm moment
 	ALTER TABLE public.accounts_v2
 	VALIDATE CONSTRAINT chk_accounts_v2_status_logic;
+10. Purpose of ".keep" file
+    Git by default doesn’t track empty folders.
+    Adding a .keep (or .gitkeep, same idea) is a dummy file so the folder itself stays in version control.
+      --> sql/migrations/.keep → reserves space for future DDL scripts.
+      --> sql/seeds/.keep → placeholder until you add seed files.
+      --> sql/sanity/.keep → placeholder until you add sanity query scripts.
+    This way, everyone cloning your repo gets the full folder structure, even before any SQL exists.
+11. updated_at trigger - A general-purpose trigger function + hook to accounts_v2 (and reuse later).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
