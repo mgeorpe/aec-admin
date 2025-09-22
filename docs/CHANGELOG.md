@@ -8,6 +8,12 @@ _All notable changes to this project will be documented here._
 - Planned: Add `v_invoice_settlements` rollup view
 - Planned: Add `updated_at` trigger to `accounts_v2` and other core tables
 
+## 2025-09-23
+
+### Added
+
+- Idempotent seed file `001_accounts_v2_seed.sql` capturing current accounts data (~33 rows).
+
 ## 2025-09-22
 
 ### Docs
