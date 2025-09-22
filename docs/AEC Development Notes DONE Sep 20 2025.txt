@@ -64,6 +64,7 @@ AEC Development Notes DONE Sep 20 2025
 ## AEC Development Notes DONE Sep 22 2025
 #########################################
 
+17. Seed - accounts_v2 (idempotent by account_code). Idempotence refers to an operation that can be applied multiple times without changing the outcome beyond the initial application. In IT systems, designing something to be idempotent ensures consistent results regardless of how many times a request is repeated.
 
 
 

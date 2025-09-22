@@ -196,9 +196,7 @@ I have reviewed another recommendation of you earlier that says something like "
 -- 📌 Micro Steps (next focus) -- Sep 22-2025 1:15am
 -------------------------
 1. Seeds: Add minimal, idempotent inserts
- - sql/seeds/accounts_v2_seed.sql (idempotent by account_code)
- - sql/seeds/account_contacts_seed.sql (idempotent by (account_code, full_name, role))
- - Re-run sanity scripts.
+  - Re-run sanity scripts.
 
 2. ADR (optional, after seeds or now if you prefer docs first)
  - One ADR covering:
@@ -218,8 +216,10 @@ I have reviewed another recommendation of you earlier that says something like "
 
 
 -------------------------
--- ???
+-- ??? In Progress
 -------------------------
+- sql/seeds/account_contacts_seed.sql (idempotent by (account_code, full_name, role))
+
 
 
 
