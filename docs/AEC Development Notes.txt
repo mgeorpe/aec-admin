@@ -179,13 +179,20 @@ So the next steps you recommend are seeds?
 I have reviewed another recommendation of you earlier that says something like "Draft ADR for updated_at guard + sanity framework (optional, but good for memory)." May I ask where does that fall in our "logical steps"?
 
 
+-------------------------
+-- verification realignment sep 22 2025 11:30pm
+-------------------------
+thanks for the explanation as to when to ADR (high-level) and when changelog/db-design will suffice. But I dont quite agree to just leave ADR to big entity choices. Changelog and db-design are for detailed stuff. ADR is the core reasoning of the decision. Plus, it is part of my learning/reupskilling back to software development too. So win-win for me. Also, I just probed you a lot because as ive said the ADR recommendation was given by you in the previous alignment. SO to be clear, I want to create an ADR right now.. So proper file name, content, commit message please. After that we can do enrich v_accounts_summary with contacts_count (no “primary” assumptions). Adds a simple COUNT(*) subquery by account_code; zero risk to existing rules. and again i dont know what should come next between Enable RLS and add minimal read policy once UI fetch paths are known. (this was given as part of previous realignment) and Option B (UI start): scaffold a read-only Accounts list in Next.js using v_accounts_summary (no mutations yet).
+
+
+
 
 
 -------------------------
--- 🎯 Macro Goals  -- Sep 22-2025 1:15am
+-- 🎯 Macro Goals  -- Sep-22-2025 11:11 pm
 -------------------------
 1. Database Foundation - stable schema, rules/guards
-2. Sanity & observability - reusable sanity SQL, simple rollup views
+2. Sanity & observability - reusable sanity SQL, simple rollup views (for quick UI + QA)
 3. Documentation Discipline - Keep db-design.md, ADRs, and CHANGELOG.md in sync with actual DB state. ADR are documenbted only after a rule is implemented and validated. The ADR records the decision, not the intent.
 4. Seed Trustworthy Data - Establish small, idempotent seeds for accounts_v2 and account_contacts.
 5. Access & security (later) - Introduce RLS/policies after schema + seeds stabilize.
@@ -193,32 +200,26 @@ I have reviewed another recommendation of you earlier that says something like "
 
 
 -------------------------
--- 📌 Micro Steps (next focus) -- Sep 22-2025 1:15am
+-- 📌 Micro Steps (next focus) -- Sep-22-2025 11:11 pm
 -------------------------
-1. Seeds: Add minimal, idempotent inserts
-  - Re-run sanity scripts.
-
-2. ADR (optional, after seeds or now if you prefer docs first)
+1. ADR (optional, after seeds or now if you prefer docs first)
  - One ADR covering:
    - updated_at trigger decision
    - status-guard constraint decision
    - sanity-check framework (why + what we check)
 
-3. Docs: Update changelog only after seeds succeed
-- Append “Seeds added (accounts, contacts) and sanity re-check passed.”
-
-4. (Optional next) Views: Enrich v_accounts_summary
+2. (Optional next) Views: Enrich v_accounts_summary
 - Add derived fields only if rules are clear (e.g., pick a primary contact rule).
 - Plan for v_invoice_settlements (rollup for later billing).
 
-5. (Later) RLS
+3. (Later) RLS
 - Enable RLS and add minimal read policy once UI fetch paths are known.
 
 
 -------------------------
 -- ??? In Progress
 -------------------------
-- sql/seeds/account_contacts_seed.sql (idempotent by (account_code, full_name, role))
+
 
 
 
