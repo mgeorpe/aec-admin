@@ -17,6 +17,12 @@ _All notable changes to this project will be documented here._
 - Idempotent seed file `001_accounts_v2_seed.sql` capturing current accounts data (~33 rows).
 - Idempotent seed file `002_account_contacts_seed.sql` capturing current contacts data.
 
+### Added
+
+- New sanity file `account_contacts_checks.sql` with:
+  - Orphans check (should return 0 rows because every contact must link to a valid account_code).
+  - Duplicates check (should return 0 rows because the same account_code + full_name + role should not repeat).
+
 ## 2025-09-21
 
 ### Added
