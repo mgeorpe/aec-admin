@@ -66,11 +66,16 @@ AEC Development Notes DONE Sep 20 2025
 
 17. Seed - accounts_v2 (idempotent by account_code). Idempotence refers to an operation that can be applied multiple times without changing the outcome beyond the initial application. In IT systems, designing something to be idempotent ensures consistent results regardless of how many times a request is repeated.
 
+18. Seed - account_contacts_v2 (idempotent by (account_code, full_name, role))
+
+19. ADR - integrity guards on accounts_v2 — status constraint, updated_at trigger, sanity SQL
 
 
+#########################################
+## AEC Development Notes DONE Sep 23 2025
+#########################################
 
-
-
+20. v_accounts_summary - added contacts_count + sanity check file
 
 
 

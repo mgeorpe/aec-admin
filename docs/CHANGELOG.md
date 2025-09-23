@@ -8,6 +8,19 @@ _All notable changes to this project will be documented here._
 - Planned: Add `v_invoice_settlements` rollup view
 - Planned: Add `updated_at` trigger to `accounts_v2` and other core tables
 
+## 2025-09-23
+
+### Schema
+
+- Enriched `v_accounts_summary` with `contacts_count`.
+- Migration file added: `sql/migrations/20250922T120000__add_contacts_count_to_v_accounts_summary.sql`.
+
+### Sanity
+
+- Added `sql/sanity/contacts_count_check.sql`:
+  - Compares `contacts_count` from the view vs raw count in `account_contacts`.
+  - Should return 0 mismatches.
+
 ## 2025-09-22
 
 ### Docs

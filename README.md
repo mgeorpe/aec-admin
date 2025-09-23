@@ -34,6 +34,8 @@ See **[Git Workflows](docs/GIT-WORKFLOWS.md)** for daily routines.
 | `sql/seeds/`      | Seed data (idempotent where possible)       |
 | `sql/sanity/`     | Reusable validation queries                 |
 
+> _Views_ are also versioned under migrations
+
 ---
 
 ## 🧭 DB Runbook (when working on schema)

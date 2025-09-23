@@ -80,6 +80,7 @@ Use only when granular learner grouping is needed.
 
 - **Purpose:** simple rollup for UI lists and sanity checks.
 - **Columns:** account_code, account_name, type, service, country, status, is_active, start_year, created_at, updated_at
+  - `contacts_count` — number of linked contacts per account (derived from `account_contacts`)
 - **Order:** account_code
 - **Notes:** Extend later when UI needs more fields.
 
