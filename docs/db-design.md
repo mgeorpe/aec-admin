@@ -4,8 +4,7 @@ _Last updated: 2025-09-17_
 
 ## Purpose
 
-Single source of truth for billing and learning relationships using stable `account_code` (e.g., `001`, `003-A`).  
-Acts as canonical anchor for invoices, payments, cycles, and learners.
+account_v2 -> Single source of truth for billing and learning relationships using stable `account_code` (e.g., `001`, `003-A`). Acts as canonical anchor for invoices, payments, cycles, and learners.
 
 ---
 
@@ -59,18 +58,18 @@ Contacts tied to an account (guardian, learner, PM, HR, etc.).
 
 ### 3. `account_learners`
 
-Optional lightweight learner labels (single or grouped).  
-Use only when granular learner grouping is needed.
+Lightweight learner labels (atomic: one learner per row).
 
-| Column        | Type        | Null | Notes                                       |
-| ------------- | ----------- | ---- | ------------------------------------------- |
-| id            | uuid (PK)   | NO   | `gen_random_uuid()`                         |
-| account_code  | text (FK)   | NO   | → `accounts_v2.account_code`                |
-| learner_label | text        | NO   | e.g., `Jewel & Jembry`, `Management Staffs` |
-| is_group      | boolean     | NO   | default `false`                             |
-| created_at    | timestamptz | NO   |                                             |
+| Column        | Type        | Null | Notes               |
+| ------------- | ----------- | ---- | ------------------- |
+| id            | uuid (PK)   | NO   | `gen_random_uuid()` |
+| account_code  | text (FK)   | NO   | → `accounts_v2`     |
+| learner_label | text        | NO   | e.g., `Jewel`       |
+| created_at    | timestamptz | NO   |                     |
 
-`unique (account_code, learner_label)`
+**Constraints**
+
+- `UNIQUE (account_code, learner_label)` — atomic-only policy.
 
 ---
 

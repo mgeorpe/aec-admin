@@ -8,6 +8,17 @@ _All notable changes to this project will be documented here._
 - Planned: Add `v_invoice_settlements` rollup view
 - Planned: Add `updated_at` trigger to `accounts_v2` and other core tables
 
+## 2025-09-24
+
+### Schema
+
+- Removed `is_group` from `account_learners`.
+- Added `UNIQUE (account_code, learner_label)` to enforce atomic-only labels.
+
+### Policy
+
+- Adopted **atomic-only learner labels** (one learner per row). Group labels out of scope for now.
+
 ## 2025-09-23
 
 ### Schema
