@@ -223,9 +223,9 @@ Going to UI now will make my head explode if we are not done with table/view rev
 2. Sanity & observability - reusable sanity SQL, simple rollup views (for quick UI + QA)
 3. Documentation Discipline - Keep db-design.md, ADRs, and CHANGELOG.md in sync with actual DB state. ADR are documenbted only after a rule is implemented and validated. The ADR records the decision, not the intent.
 4. Seed Trustworthy Data - Establish small, idempotent seeds for accounts_v2 and account_contacts.
-5. Access & security (later) - Introduce RLS/policies after schema + seeds stabilize.
-6. UI wiring - Use the rollup views + clean data to wire the Next.js UI with confidence.
-
+5. Declutter: deprecate legacy clients/learners/guardians tables/views after backup.
+6. Access & security (later) - Introduce RLS/policies after schema + seeds stabilize.
+7. UI wiring - Use the rollup views + clean data to wire the Next.js UI with confidence.
 
 -------------------------
 -- 📌 Micro Steps (next focus) -- Sep-22-2025 10:33 am
@@ -249,10 +249,7 @@ Maybe:
 -- ??? In Progress:: Legacy Table Cleanup --> 
 -------------------------
 
-GOAL 1: account_learners
-
-GOAL 2: Still havent done this things coz I am bugged down with this undocumented business decisions regarding our existing table.
-
+GOAL 2
 1. The actual insert statements for learners
 2. Changelog/Readme
 3. Git commit
