@@ -89,8 +89,8 @@ AEC Development Notes DONE Sep 20 2025
 
 24. Reinventory and reclassify to the remaining tables and views 
 
-25. Dropped legacy view v_client_lip_summary, v_cycle_lip_summary
+25. Dropped legacy client views: v_client_lip_summary, v_cycle_lip_summary
 
+26. Dropped empty legacy table learner_guardians
 
-26. 
 
