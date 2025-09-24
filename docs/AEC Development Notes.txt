@@ -249,10 +249,9 @@ Maybe:
 -- ??? In Progress:: Legacy Table Cleanup --> 
 -------------------------
 
-GOAL 2
-1. The actual insert statements for learners
-2. Changelog/Readme
-3. Git commit
+
+
+
 
 
 

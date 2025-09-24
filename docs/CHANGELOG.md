@@ -23,6 +23,11 @@ _All notable changes to this project will be documented here._
 
 - Created read-only atomic policy checks for account_learners
 
+### Cleanup
+
+- Dropped legacy views: `accounts`, `v_clients_*`, `v_guardians_*`, `v_learners_*`, `v_learner_guardian_summary`.
+- Rationale: migrated to `accounts_v2`; legacy model (clients/learners/guardians) deprecated.
+
 ## 2025-09-23
 
 ### Schema
