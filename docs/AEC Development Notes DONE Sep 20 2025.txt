@@ -91,6 +91,6 @@ AEC Development Notes DONE Sep 20 2025
 
 25. Dropped legacy client views: v_client_lip_summary, v_cycle_lip_summary
 
-26. Dropped empty legacy table learner_guardians
+26. Dropped empty legacy table learner_guardians and learners_guardians (0 rows)
 
 

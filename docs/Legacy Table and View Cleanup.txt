@@ -1490,3 +1490,593 @@ And hence I didnt verify.
 I also didnt do your backup, drop, verify flow.
 Also didnt do the guardians, learners.
 I expect your answer to be one at a time. I am not really a fan of dealing with multiple entities at given time because when error happens or when I read something stupid from your response, then the whole thing falls apart.
+
+
+########
+RESPONSE
+########
+
+Understood—one entity at a time. Here’s a single, surgical step.
+
+Step: retire v_client_lip_summary (legacy)
+a) Do (backup → drop)
+
+Backup (Supabase UI):
+
+SELECT * FROM public.v_client_lip_summary;
+
+
+Export the result to CSV.
+
+Drop:
+
+DROP VIEW IF EXISTS public.v_client_lip_summary CASCADE;
+
+b) Verify
+SELECT viewname
+FROM pg_views
+WHERE schemaname='public' AND viewname='v_client_lip_summary';
+
+
+Expected: no rows.
+
+c) Docs / Commit (Sep-24)
+
+CHANGELOG.md
+
+### Cleanup
+- Dropped legacy view `v_client_lip_summary` after backup (legacy clients model).
+
+
+Commit
+
+git acp "schema(cleanup): drop legacy view v_client_lip_summary after backup"
+
+
+Reply “done” when finished; we’ll do v_cycle_lip_summary next in the same pattern.
+
+~~~~~
+PROMPT
+~~~~~~
+
+done
+
+########
+RESPONSE
+########
+
+
+Great. Next single step.
+
+Step: retire v_cycle_lip_summary (legacy)
+
+a) Do (backup → drop)
+
+Backup (Supabase UI):
+
+SELECT * FROM public.v_cycle_lip_summary;
+
+
+Export to CSV.
+
+Drop:
+
+DROP VIEW IF EXISTS public.v_cycle_lip_summary CASCADE;
+
+
+b) Verify
+
+SELECT viewname
+FROM pg_views
+WHERE schemaname='public' AND viewname='v_cycle_lip_summary';
+
+
+Expected: no rows.
+
+c) Changelog / Commit (Sep-24)
+
+CHANGELOG.md
+
+### Cleanup
+- Dropped legacy view `v_cycle_lip_summary` after backup (legacy clients model).
+
+
+Commit
+
+git acp "schema(cleanup): drop legacy view v_cycle_lip_summary after backup"
+
+
+Reply “done” when finished. Then we’ll pick the next single step (either guardians probe or learners backup/drop).
+
+
+~~~~~~
+PROMPT
+~~~~~~
+
+done.. lets focus on learners before guardians
+
+#######
+RESPONSE
+#######
+
+Perfect—learners only, one step.
+
+Step: retire learners (legacy → replaced by account_learners)
+
+a) Do (backup → drop)
+
+Backup (Supabase UI):
+
+SELECT * FROM public.learners;
+
+
+Export to CSV.
+
+Drop:
+
+DROP TABLE IF EXISTS public.learners;
+
+
+b) Verify
+
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema='public' AND table_name='learners';
+
+
+Expected: no rows.
+
+c) Changelog / Commit (Sep-24)
+
+CHANGELOG.md
+
+### Cleanup
+- Dropped legacy table `learners` after backup; replaced by `account_learners` (atomic labels).
+
+
+Commit
+
+git acp "schema(cleanup): drop legacy table learners after backup"
+
+
+Reply “done” when finished; we’ll handle learners_master next (same pattern) unless you prefer another target.
+
+
+~~~~~~
+PROMPT
+~~~~~~
+
+ERROR: 2BP01: cannot drop table learners because other objects depend on it DETAIL: constraint learner_guardians_learner_id_fkey on table learner_guardians depends on table learners constraint learning_cycles_learner_id_fkey on table learning_cycles depends on table learners HINT: Use DROP ... CASCADE to drop the dependent objects too. damn. you didnt issue a check if it has no dependenecies
+
+########
+RESPONSE
+########
+
+You’re right—that dependency check should have come first. Here’s the precise, minimal path.
+
+What happened
+
+learners can’t be dropped because of FKs from:
+
+learner_guardians.learner_id_fkey (table likely empty)
+
+learning_cycles.learner_id_fkey (table has data)
+
+Next micro-step (safe + one at a time)
+1) Inspect dependencies & row counts
+
+Run:
+
+-- FK names pointing to learners
+SELECT conname
+FROM pg_constraint
+WHERE confrelid = 'public.learners'::regclass;
+
+-- Quick row counts for dependents
+SELECT 'learner_guardians' AS t, COUNT(*) FROM public.learner_guardians
+UNION ALL
+SELECT 'learning_cycles', COUNT(*) FROM public.learning_cycles;
+
+2) If learner_guardians is 0 rows → drop it first
+DROP TABLE IF EXISTS public.learner_guardians;
+
+
+Verify:
+
+SELECT to_regclass('public.learner_guardians') IS NOT NULL AS exists;
+
+3) Leave learning_cycles FK in place (for now)
+
+It has data (2 rows).
+
+We’ll rebase learning_cycles to account_code later; until then, do not drop learners.
+
+Recommendation (decision)
+
+Do now: Drop learner_guardians (empty), then stop.
+
+Defer: Dropping learners until we migrate learning_cycles off learner_id.
+
+Changelog / Commit (only if you drop learner_guardians)
+
+CHANGELOG.md (2025-09-24)
+
+### Cleanup
+- Dropped legacy table `learner_guardians` (0 rows; obsolete).
+
+
+Commit
+
+git acp "schema(cleanup): drop empty legacy table learner_guardians"
+
+
+Say “done” after step 2, and I’ll queue the next single step (either drop learners_guardians if also empty, or move to learners_master).
+
+
+~~~~~~
+PROMPT
+~~~~~~
+done dropping learner_guardians
+
+
+########
+RESPONSE
+########
+
+Great. Next single step (still under learners scope):
+
+Step: drop learners_guardians (likely empty)
+
+a) Do (check → drop)
+
+-- Check rows
+SELECT COUNT(*) AS rows FROM public.learners_guardians;
+
+-- If 0, drop
+DROP TABLE IF EXISTS public.learners_guardians;
+
+
+b) Verify
+
+SELECT to_regclass('public.learners_guardians') IS NOT NULL AS exists;
+-- Expect: false
+
+
+c) Changelog / Commit (Sep-24)
+
+CHANGELOG.md
+
+### Cleanup
+- Dropped legacy table `learners_guardians` (0 rows; obsolete).
+
+
+Commit
+
+git acp "schema(cleanup): drop empty legacy table learners_guardians"
+
+
+Reply “done” when finished; then we’ll handle learners_master (backup → drop), still within the learners scope.
+
+
+~~~~~~
+PROMPT
+~~~~~~
+
+done
+
+########
+RESPONSE
+########
+
+Next step under learners scope
+
+Handle learners_master (since it had 8 rows when we inventoried):
+
+Check contents (backup via query/export if needed):
+
+SELECT * FROM public.learners_master LIMIT 20;
+
+
+→ Export from Supabase UI if you want a personal backup.
+
+Drop table:
+
+DROP TABLE IF EXISTS public.learners_master;
+
+
+Verify gone:
+
+SELECT to_regclass('public.learners_master') IS NOT NULL AS exists;
+-- Expect: false
+
+
+Changelog / Commit (Sep-24):
+
+CHANGELOG.md
+
+### Cleanup
+- Dropped legacy table `learners_master` (8 rows; data replaced by `account_learners`).
+
+
+Commit:
+
+git acp "schema(cleanup): drop legacy table learners_master (replaced by account_learners)"
+
+
+Would you like me to also prep a quick sanity check query to confirm that all expected learners are now represented in account_learners before you drop learners_master?
+
+
+
+~~~~~~
+PROMPT
+~~~~~~
+
+ERROR: 2BP01: cannot drop table learners_master because other objects depend on it DETAIL: constraint fk_invoices_learner on table invoices depends on table learners_master HINT: Use DROP ... CASCADE to drop the dependent objects too.
+
+#######
+RESPONSE
+#######
+You hit a hard dependency: invoices.fk_invoices_learner → learners_master.
+We must not drop learners_master until invoices are rebased to account_code.
+
+What to do now (single, surgical step)
+
+Goal: Understand how invoices link today, so we can plan the rebase.
+
+a) Inspect invoices shape
+
+-- Columns
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema='public' AND table_name='invoices'
+ORDER BY ordinal_position;
+
+-- How many invoices, and how many reference learners_master
+SELECT COUNT(*) AS total_invoices FROM public.invoices;
+
+SELECT COUNT(*) AS with_learner_code
+FROM public.invoices
+WHERE learner_code IS NOT NULL;
+
+SELECT COUNT(*) AS missing_learner_code
+FROM public.invoices
+WHERE learner_code IS NULL;
+
+
+b) Check mapping path to accounts_v2
+
+-- Do all invoices' learner_code exist in learners_master?
+SELECT COUNT(*) AS missing_in_lm
+FROM public.invoices i
+LEFT JOIN public.learners_master lm ON lm.learner_code = i.learner_code
+WHERE i.learner_code IS NOT NULL AND lm.learner_code IS NULL;
+
+-- Can we derive account_code (via learners_master.client_code)?
+SELECT i.id, i.learner_code, lm.client_code AS account_code_guess
+FROM public.invoices i
+LEFT JOIN public.learners_master lm ON lm.learner_code = i.learner_code
+LIMIT 20;
+
+
+Expected outcomes & decisions
+
+If missing_in_lm = 0 and lm.client_code is populated → we can plan rebase (invoices.account_code FK to accounts_v2) and then drop the FK to learners_master.
+
+If there are gaps or client_code is NULL → list those edge cases; we’ll decide a fallback (manual mapping or archival).
+
+What not to do now
+
+Don’t drop learners_master.
+
+No changelog/commit needed yet—this is inspection only.
+
+Reply with the results of (a) and the two counts from (b), and I’ll give you the minimal rebase plan (columns to add, data backfill SQL, FK swap), one step at a time.
+
+
+~~~~~~
+PROMPT
+~~~~~~
+
+Columns:
+
+| column_name              | data_type                |
+| ------------------------ | ------------------------ |
+| id                       | uuid                     |
+| cycle_id                 | bigint                   |
+| client_number            | integer                  |
+| schedule_no              | integer                  |
+| issue_date               | date                     |
+| due_date                 | date                     |
+| status                   | USER-DEFINED             |
+| subtotal                 | numeric                  |
+| platform_fees            | numeric                  |
+| tax                      | numeric                  |
+| total_amount             | numeric                  |
+| invoice_number           | text                     |
+| billed_to                | text                     |
+| billed_to_address        | text                     |
+| billed_by                | text                     |
+| billed_by_address        | text                     |
+| bank_info1               | text                     |
+| bank_info2               | text                     |
+| gcash_number             | text                     |
+| tin                      | text                     |
+| paypal                   | text                     |
+| program_name             | text                     |
+| contract_price           | numeric                  |
+| particulars              | jsonb                    |
+| footer_line_1            | text                     |
+| footer_line_2            | text                     |
+| footer_line_3            | text                     |
+| pdf_url                  | text                     |
+| created_at               | timestamp with time zone |
+| updated_at               | timestamp with time zone |
+| is_created_in_paypal     | boolean                  |
+| is_sent_email            | boolean                  |
+| has_pdf_generated        | boolean                  |
+| is_archived              | boolean                  |
+| created_by               | text                     |
+| updated_by               | text                     |
+| client_code              | text                     |
+| payer_account_code       | text                     |
+| payer_guardian_id        | uuid                     |
+| invoice_number_legacy    | text                     |
+| inv_seq_no               | integer                  |
+| invoice_number_canonical | text                     |
+
+How many invoices, and how many reference learners_master: 
+
+invoices: 2
+
+with learner: ERROR:  42703: column "learner_code" does not exist
+LINE 3: WHERE learner_code IS NOT NULL limit 100;
+
+missing learner: ERROR:  42703: column "learner_code" does not exist
+LINE 3: WHERE learner_code IS NULL limit 100;
+
+
+Do all invoices' learner_code exist in learners_master?:
+ERROR:  42703: column i.learner_code does not exist
+LINE 3: LEFT JOIN public.learners_master lm ON lm.learner_code = i.learner_code
+
+Can we derive account_code (via learners_master.client_code)?
+ERROR:  42703: column i.learner_code does not exist
+LINE 3: LEFT JOIN public.learners_master lm ON lm.learner_code = i.learner_code
+
+
+
+
+#######
+RESPONSE
+#######
+
+You’re right—the invoices table has no learner_code column. Before any drop/rebase, let’s inspect the actual FK that blocked you.
+
+Single next step — inspect the FK dependency
+
+Run these (read-only):
+
+List FKs on invoices
+
+SELECT conname AS fk_name,
+       pg_get_constraintdef(c.oid, true) AS definition
+FROM pg_constraint c
+JOIN pg_class t ON t.oid = c.conrelid
+WHERE t.relname = 'invoices' AND c.contype = 'f';
+
+
+List any FKs that reference learners_master (from anywhere)
+
+SELECT conname AS fk_name,
+       rel_t.relname AS child_table,
+       rel_s.relname AS parent_table,
+       pg_get_constraintdef(c.oid, true) AS definition
+FROM pg_constraint c
+JOIN pg_class rel_t ON rel_t.oid = c.conrelid
+JOIN pg_class rel_s ON rel_s.oid = c.confrelid
+WHERE c.contype = 'f'
+  AND rel_s.relname = 'learners_master';
+
+
+Quick peek at your 2 invoices
+
+SELECT id, client_code, payer_account_code, cycle_id, invoice_number, created_at
+FROM public.invoices
+ORDER BY created_at
+LIMIT 10;
+
+
+Why: We need the exact FK columns to plan the rebase (or confirm it’s stale).
+Reply with the FK outputs; I’ll give you the minimal next action (either drop/rename the FK if stale, or add account_code mapping if real).
+
+
+~~~~~~
+PROMPT
+~~~~~~
+
+Fk on invoices:
+
+| fk_name                          | definition                                                                                            |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| fk_invoices_client               | FOREIGN KEY (client_code) REFERENCES clients(client_code) ON UPDATE CASCADE ON DELETE CASCADE         |
+| fk_invoices_learner              | FOREIGN KEY (client_number) REFERENCES learners_master(learner_code)                                  |
+| invoices_client_code_fkey        | FOREIGN KEY (client_code) REFERENCES clients(client_code) ON UPDATE CASCADE ON DELETE RESTRICT        |
+| invoices_cycle_id_fkey           | FOREIGN KEY (cycle_id) REFERENCES learning_cycles(id) ON DELETE CASCADE                               |
+| invoices_payer_account_code_fkey | FOREIGN KEY (payer_account_code) REFERENCES clients(client_code) ON UPDATE CASCADE ON DELETE RESTRICT |
+| invoices_payer_guardian_id_fkey  | FOREIGN KEY (payer_guardian_id) REFERENCES guardians(id) ON UPDATE CASCADE ON DELETE RESTRICT         |
+
+FK that reference learners_master:
+
+| fk_name             | child_table | parent_table    | definition                                                           |
+| ------------------- | ----------- | --------------- | -------------------------------------------------------------------- |
+| fk_invoices_learner | invoices    | learners_master | FOREIGN KEY (client_number) REFERENCES learners_master(learner_code) |
+
+
+Quick peek:
+
+| id                                   | client_code | payer_account_code | cycle_id | invoice_number             | created_at                    |
+| ------------------------------------ | ----------- | ------------------ | -------- | -------------------------- | ----------------------------- |
+| e53e8c82-a92c-412f-be01-cde9bbff9531 | 009         | null               | 1        | AEC-INV-009-001-2024-09-01 | 2025-09-04 15:18:53.155927+00 |
+| 79b7553a-48e3-4a15-a8d8-c21b04c8bde8 | 009         | null               | 1        | AEC-INV-009-002-2025-09-05 | 2025-09-04 17:05:10.095413+00 |
+
+FYI this invoices were just test data
+
+
+
+########
+RESPONSE
+########
+
+Got it. We’ll do this one constraint at a time.
+
+Step: Repoint invoices.client_code FK from clients → accounts_v2
+
+Why
+
+You confirmed full coverage clients.client_code == accounts_v2.account_code.
+
+This unblocks deprecating the clients table later.
+
+Zero data change; FK swap only.
+
+a) Do (DDL)
+-- Drop legacy FKs on invoices.client_code (you have two)
+ALTER TABLE public.invoices DROP CONSTRAINT IF EXISTS fk_invoices_client;
+ALTER TABLE public.invoices DROP CONSTRAINT IF EXISTS invoices_client_code_fkey;
+
+-- Add new FK to accounts_v2
+ALTER TABLE public.invoices
+  ADD CONSTRAINT invoices_client_code_fk_accounts_v2
+  FOREIGN KEY (client_code)
+  REFERENCES public.accounts_v2(account_code)
+  ON UPDATE CASCADE
+  ON DELETE RESTRICT;
+
+b) Verify
+SELECT conname AS fk_name, pg_get_constraintdef(c.oid, true) AS definition
+FROM pg_constraint c
+JOIN pg_class t ON t.oid = c.conrelid
+WHERE t.relname = 'invoices' AND c.contype = 'f' AND conname ~ 'client_code';
+-- Expect exactly one FK pointing to accounts_v2(account_code)
+
+c) Docs / Commit (Sep-24)
+
+CHANGELOG.md
+
+### Schema
+- Repointed `invoices.client_code` FK from `clients(client_code)` to `accounts_v2(account_code)`.
+
+
+Commit
+
+git acp "schema: repoint invoices.client_code FK to accounts_v2"
+
+
+Reply “done” when finished.
+Next (single step) will be either:
+
+repoint invoices.payer_account_code FK to accounts_v2, or
+
+drop fk_invoices_learner (the FK to learners_master) to pave the way for dropping learners_master later.
+
+Your choice after this one lands.

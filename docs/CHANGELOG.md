@@ -14,6 +14,7 @@ _All notable changes to this project will be documented here._
 
 - Removed `is_group` from `account_learners`.
 - Added `UNIQUE (account_code, learner_label)` to enforce atomic-only labels.
+- Repointed `invoices.client_code` FK from `clients(client_code)` to `accounts_v2(account_code)`.
 
 ### Policy
 
@@ -28,7 +29,7 @@ _All notable changes to this project will be documented here._
 - Dropped legacy views: `accounts`, `v_clients_*`, `v_guardians_*`, `v_learners_*`, `v_learner_guardian_summary`.
   - Rationale: migrated to `accounts_v2`; legacy model (clients/learners/guardians) deprecated.
 - Dropped legacy client views: `v_client_lip_summary`, `v_cycle_lip_summary`
-- Dropped legacy table `learner_guardians` (0 rows; obsolete).
+- Dropped legacy table `learner_guardians`, `learners_guardians` (both 0 rows; obsolete).
 
 ## 2025-09-23
 
