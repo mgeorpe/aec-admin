@@ -1114,3 +1114,372 @@ INSERT INTO public.account_learners (id, account_code, learner_label, created_at
     VALUES ('37b4833a-6563-45cd-ba6a-d0844a92e709', '034', 'Aitor Romo Janeiro', '2025-09-24 08:13:54.612806+00')
     ON CONFLICT (account_code, learner_label) DO NOTHING;
               
+
+$$$$$$$$$$$$$$$$$$
+  Backup (cancelled)
+  Drop
+  Reinventory and Reclassify
+$$$$$$$$$$$$$$$$$$
+
+~~~~~~~
+PROMPT
+~~~~~~~
+done dropping and done committing these are the current tables and views left.. what do you think we should drop there..
+
+########
+RESPONSE
+########
+
+Here’s the clean, low-risk path to finish the legacy cleanup. No UI, just DB.
+Flow: backup → verify coverage → drop (views first, then tables).
+
+What’s safe to drop next (suggested order)
+
+Views (legacy): v_client_lip_summary, v_cycle_lip_summary
+Reason: depend on clients (legacy). You’ve moved to accounts_v2.
+
+Zero/near-zero legacy tables: org_contacts (0), learner_guardians (0), learners_guardians (0)
+Reason: unused; no data or only structural relics.
+
+Legacy data now covered by new model (after checks):
+
+client_contacts (5 rows) → now account_contacts
+
+guardians (1 row) → now account_contacts
+
+learners (29 rows) → now account_learners
+
+learners_master (8 rows) → likely redundant to learners/labels
+
+clients (33 rows) → now accounts_v2 (you already confirmed 100% coverage)
+
+Verification queries (run before drops)
+A) Views → confirm they touch legacy
+-- Should show 'clients' among referenced tables for these
+SELECT v.table_name AS view_name, u.table_name AS referenced_table
+FROM information_schema.views v
+JOIN information_schema.view_table_usage u
+  ON v.table_schema=u.view_schema AND v.table_name=u.view_name
+WHERE v.table_schema='public'
+  AND v.table_name IN ('v_client_lip_summary','v_cycle_lip_summary')
+ORDER BY v.table_name, u.table_name;
+
+B) client_contacts→account_contacts coverage
+-- Map columns quickly
+SELECT column_name FROM information_schema.columns
+WHERE table_schema='public' AND table_name='client_contacts' ORDER BY 1;
+
+-- Contacts in client_contacts not represented (by (code,name,role)) in account_contacts
+SELECT cc.*
+FROM public.client_contacts cc
+LEFT JOIN public.account_contacts ac
+  ON ac.account_code = cc.client_code
+ AND ac.full_name   = cc.full_name
+ AND ac.role        = cc.role
+WHERE ac.account_code IS NULL;
+-- Expect 0 rows if fully migrated
+
+C) guardians → account_contacts coverage
+-- Guardians not represented in account_contacts (by (code,name,role='Guardian'))
+SELECT g.*
+FROM public.guardians g
+LEFT JOIN public.account_contacts ac
+  ON ac.account_code = g.client_code
+ AND ac.full_name   = g.guardian_name
+ AND ac.role        = 'Guardian'
+WHERE ac.account_code IS NULL;
+-- Expect 0 rows, or decide to map them into account_contacts before dropping
+
+D) learners / learners_master → account_learners
+-- Learners not represented (by (code,label))
+SELECT l.client_code, l.learner_name
+FROM public.learners l
+LEFT JOIN public.account_learners al
+  ON al.account_code  = l.client_code
+ AND al.learner_label = l.learner_name
+WHERE al.account_code IS NULL;
+-- Expect 0 rows (you seeded 29 labels)
+
+-- Learners_master not represented (if you want to be thorough)
+SELECT lm.*
+FROM public.learners_master lm
+LEFT JOIN public.account_learners al
+  ON al.account_code  = lm.client_code
+ AND al.learner_label = lm.learner_name
+WHERE al.account_code IS NULL;
+-- Decide: if rows appear, either migrate them to account_learners or accept archival-only backup
+
+E) clients→accounts_v2 (already confirmed, but recheck is fast)
+SELECT c.client_code
+FROM public.clients c
+LEFT JOIN public.accounts_v2 a ON a.account_code = c.client_code
+WHERE a.account_code IS NULL;
+-- Expect 0 rows
+
+Backup via Supabase UI (same as before)
+
+For each object you’ll drop, run SELECT * FROM ...; and Export → CSV.
+
+Drop statements (run after backups & checks)
+1) Views (legacy)
+DROP VIEW IF EXISTS public.v_client_lip_summary CASCADE;
+DROP VIEW IF EXISTS public.v_cycle_lip_summary CASCADE;
+
+2) Zero/unused legacy tables
+DROP TABLE IF EXISTS public.org_contacts;
+DROP TABLE IF EXISTS public.learner_guardians;
+DROP TABLE IF EXISTS public.learners_guardians;
+
+3) Legacy tables covered by new model (only if coverage queries returned 0)
+DROP TABLE IF EXISTS public.client_contacts;
+DROP TABLE IF EXISTS public.guardians;
+DROP TABLE IF EXISTS public.learners_master;
+DROP TABLE IF EXISTS public.learners;
+DROP TABLE IF EXISTS public.clients;
+
+Verify cleanup
+SELECT relname AS remaining_table
+FROM pg_stat_user_tables
+ORDER BY relname;
+
+SELECT viewname AS remaining_view
+FROM pg_views
+WHERE schemaname='public'
+ORDER BY viewname;
+
+Changelog + commit (when done)
+
+CHANGELOG.md (2025-09-24)
+
+### Cleanup
+- Dropped legacy views: `v_client_lip_summary`, `v_cycle_lip_summary`.
+- Dropped legacy tables: `org_contacts`, `learner_guardians`, `learners_guardians`.
+- Dropped migrated legacy tables (after coverage checks): `client_contacts`, `guardians`, `learners_master`, `learners`, `clients`.
+- Rationale: unified on `accounts_v2` + `account_contacts` + `account_learners`.
+
+
+Commit
+
+git acp "schema(cleanup): remove legacy client/guardian/learner views and tables after backup & coverage checks"
+
+
+Say “go views” to drop the two legacy views first, or “go zero tables” to start with the empty legacy tables. I’ll stick to your pace.
+
+
+
+
+~~~~~~
+PROMPT
+~~~~~~
+
+A -- Should show 'clients' among referenced tables for these
+
+| view_name            | referenced_table |
+| -------------------- | ---------------- |
+| v_client_lip_summary | clients          |
+| v_client_lip_summary | invoices         |
+| v_client_lip_summary | payments         |
+| v_cycle_lip_summary  | clients          |
+| v_cycle_lip_summary  | invoices         |
+| v_cycle_lip_summary  | learning_cycles  |
+| v_cycle_lip_summary  | payments         |
+
+
+B1 -- Map Columns Quickly
+| column_name |
+| ----------- |
+| client_code |
+| email       |
+| full_name   |
+| id          |
+| phone       |
+| role        |
+
+B2 -- Contacts in client_contacts not represented (by (code,name,role)) in account_contacts
+
+| id                                   | client_code | full_name          | role        | email                         | phone         |
+| ------------------------------------ | ----------- | ------------------ | ----------- | ----------------------------- | ------------- |
+| cd7bc8a5-d44e-426f-a378-41e25893788f | 002         | Primary Contact    | Coordinator | ascensus.primary@example.com  | +65 1111 2222 |
+| 07d3b667-54ba-4696-b521-1f385567d7a7 | 002         | Finance Contact    | Finance     | ascensus.finance@example.com  | +65 3333 4444 |
+| a3dd0bc6-6cd2-4505-aacb-c16600e8090c | 002         | Academic Lead      | Academic    | ascensus.academic@example.com | +65 5555 6666 |
+| 34d32c92-8998-4daf-9492-326d787c7c92 | 002         | Operations Manager | Operations  | ascensus.ops@example.com      | +65 7777 8888 |
+| d29a6e3e-0331-4049-a1a5-f5e23842b3dc | 002         | Backup Contact     | Backup      | ascensus.backup@example.com   | +65 9999 0000 |
+
+I remembered the other chat recommnded we have this. Not sure what to do with it now?
+
+
+C - Guardians not represented in account_contacts (by (code,name,role='Guardian')):
+
+ERROR:  42703: column g.client_code does not exist
+LINE 4:   ON ac.account_code = g.client_code
+
+
+D1 -- Learners not represented (by (code,label)):
+
+| client_code | learner_name      |
+| ----------- | ----------------- |
+| 022         | Estrella  Mediero |
+
+Maybe because the original estrella from learners has whitespace.
+
+
+D2 -- Learners_master not represented (if you want to be thorough)
+
+| learner_code | learner_name        | service | country   | start_year | created_at                    | created_by | updated_by | archived_at | client_code |
+| ------------ | ------------------- | ------- | --------- | ---------- | ----------------------------- | ---------- | ---------- | ----------- | ----------- |
+| 105          | Test Japan edited   | CD      | Japan     | 2025       | 2025-09-05 12:51:37.321867+00 | system     | system     | null        | null        |
+| 9            | Irene Chiriac       | TF      | Spain     | 2022       | 2025-09-04 15:12:08.258732+00 | null       | null       | null        | null        |
+| 104          | Test Malaysia Again | TF      | Malaysia  | 2026       | 2025-09-04 21:03:18.052622+00 | system     | system     | null        | null        |
+| 103          | Test Malaysian      | TF      | Malaysia  | 2025       | 2025-09-04 20:54:16.915198+00 | system     | system     | null        | null        |
+| 101          | Test Learner 101    | TF      | Indonesia | 2025       | 2025-09-04 19:32:51.092133+00 | system     | system     | null        | null        |
+| 88           | Audit Learner       | TF      | Singapore | 2025       | 2025-09-04 17:04:02.266366+00 | system     | system     | null        | null        |
+| 99           | Test Audit          | TF      | Singapore | 2025       | 2025-09-04 17:00:24.357954+00 | system     | system     | null        | null        |
+| 102          | Test Italian        | TF      | Italy     | 2025       | 2025-09-04 20:30:56.360417+00 | system     | system     | null        | null        |
+
+My approach back then was I just gave a wireframe to the previous chat, we did some tables, then we wire them to UI then Ive created some data in the UI and they were stored in database.
+
+E - clients→accounts_v2 (already confirmed, but recheck is fast)
+
+Success. No rows returned
+
+I ignored everything after "Backup via Supabase UI (same as before)"
+
+
+#########
+RESPONSE
+#########
+
+Thanks—this is clear. Here’s exactly what to do next, tied to your findings.
+
+What we learned (quick)
+
+v_client_lip_summary / v_cycle_lip_summary depend on clients → legacy; safe to retire after backup.
+
+client_contacts → account_contacts: 5 Zenith rows are not in account_contacts yet (B2).
+
+guardians: need column names to map (your error shows no client_code column).
+
+learners mismatch was only the Estrella whitespace (already fixed in account_learners).
+
+learners_master are test rows with NULL client_code (UI-created); not part of the new model.
+
+Micro steps (do → verify). No UI, no extra chatter.
+1) Migrate the 5 Zenith contacts into account_contacts
+
+[a] Do (idempotent insert based on (account_code, full_name, role)):
+
+INSERT INTO public.account_contacts (account_code, full_name, role, email, phone)
+SELECT '002', 'Primary Contact',    'Coordinator', 'ascensus.primary@example.com',  '+65 1111 2222'
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.account_contacts WHERE account_code='002' AND full_name='Primary Contact' AND role='Coordinator'
+);
+
+INSERT INTO public.account_contacts (account_code, full_name, role, email, phone)
+SELECT '002', 'Finance Contact',    'Finance',     'ascensus.finance@example.com',  '+65 3333 4444'
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.account_contacts WHERE account_code='002' AND full_name='Finance Contact' AND role='Finance'
+);
+
+INSERT INTO public.account_contacts (account_code, full_name, role, email, phone)
+SELECT '002', 'Academic Lead',      'Academic',    'ascensus.academic@example.com', '+65 5555 6666'
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.account_contacts WHERE account_code='002' AND full_name='Academic Lead' AND role='Academic'
+);
+
+INSERT INTO public.account_contacts (account_code, full_name, role, email, phone)
+SELECT '002', 'Operations Manager', 'Operations',  'ascensus.ops@example.com',      '+65 7777 8888'
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.account_contacts WHERE account_code='002' AND full_name='Operations Manager' AND role='Operations'
+);
+
+INSERT INTO public.account_contacts (account_code, full_name, role, email, phone)
+SELECT '002', 'Backup Contact',     'Backup',      'ascensus.backup@example.com',   '+65 9999 0000'
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.account_contacts WHERE account_code='002' AND full_name='Backup Contact' AND role='Backup'
+);
+
+
+[b] Verify
+
+SELECT account_code, full_name, role, email, phone
+FROM public.account_contacts
+WHERE account_code = '002'
+ORDER BY full_name;
+
+
+Expect to see those 5 rows present.
+
+(Docs/commit after step 3, to keep this tight.)
+
+2) Backup & drop legacy views tied to clients
+
+[a] Backup in Supabase UI (run then Export → CSV):
+
+SELECT * FROM public.v_client_lip_summary;
+SELECT * FROM public.v_cycle_lip_summary;
+
+
+[b] Drop
+
+DROP VIEW IF EXISTS public.v_client_lip_summary CASCADE;
+DROP VIEW IF EXISTS public.v_cycle_lip_summary CASCADE;
+
+
+[c] Verify
+
+SELECT viewname FROM pg_views WHERE schemaname='public' ORDER BY viewname;
+
+3) Guardians mapping (need columns to decide)
+
+[a] Probe columns
+
+SELECT column_name
+FROM information_schema.columns
+WHERE table_schema='public' AND table_name='guardians'
+ORDER BY ordinal_position;
+
+
+[b] If columns look like (guardian_name, maybe client_code or account_code, plus phone/email):
+
+I’ll give you a matching idempotent INSERT into account_contacts with role='Guardian'.
+
+If there’s no code column, we’ll just backup guardians and plan to drop (since the single row is legacy).
+
+4) Learners/learners_master decisions
+
+learners: you already covered all labels in account_learners (except the fixed whitespace).
+
+Backup SELECT * FROM public.learners; (UI export), then we can drop.
+
+learners_master: all rows have NULL client_code (test data).
+
+Backup if you want a record; then safe to drop.
+
+Drop (run only after backups):
+
+DROP TABLE IF EXISTS public.learners;
+DROP TABLE IF EXISTS public.learners_master;
+
+Changelog & commit (do after completing 1–2; guardians/learners drops can follow in a later commit)
+
+CHANGELOG.md (2025-09-24)
+
+### Added
+- Migrated 5 Zenith contacts from `client_contacts` into `account_contacts` (idempotent).
+
+### Cleanup
+- Dropped legacy views: `v_client_lip_summary`, `v_cycle_lip_summary` (after UI export backup).
+
+
+Commit
+
+git acp "schema(cleanup): migrate Zenith contacts to account_contacts; drop v_client_lip_summary/v_cycle_lip_summary after backup"
+
+
+If you run Step 3a (guardians columns) and paste the result, I’ll give you the exact insert (or confirm a drop) in one shot.
+
+
+
+~~~~~~
+PROMPT
+~~~~~~

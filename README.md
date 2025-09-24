@@ -1,6 +1,9 @@
 # AEC Admin
 
-Admin app for billing + learning management  
+Admin app for billing + learning management
+
+Actual Project Start: Sep-4-2025 (unless my memory fails me)
+
 Tech stack: **PostgreSQL + Supabase + Next.js**
 
 ---

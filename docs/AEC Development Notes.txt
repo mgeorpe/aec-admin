@@ -217,7 +217,7 @@ Going to UI now will make my head explode if we are not done with table/view rev
 
 
 -------------------------
--- 🎯 Macro Goals  -- Sep-23-2025 10:33 am
+-- 🎯 Macro Goals  -- Sep-24-2025 8:57 pm
 -------------------------
 1. Database Foundation - stable schema, rules/guards
 2. Sanity & observability - reusable sanity SQL, simple rollup views (for quick UI + QA)
@@ -228,17 +228,13 @@ Going to UI now will make my head explode if we are not done with table/view rev
 7. UI wiring - Use the rollup views + clean data to wire the Next.js UI with confidence.
 
 -------------------------
--- 📌 Micro Steps (next focus) -- Sep-22-2025 10:33 am
+-- 📌 Micro Steps (next focus) -- Sep-24-2025 8:57 pm
 -------------------------
 Next:
-1. Inventory & classify (so we know what to keep/drop)
-2. account_learners — verify, seed, sanity
-3. Legacy cleanup plan (no drops yet)
- - After A) inventory, we’ll mark each clients/guardians/learners*/their views** as:
-   - Keep (actively used by new model),
-   - Migrate (data to fold into new tables),
-   - Deprecate (will drop after backup).
- - Then we’ll script DROP VIEW/TABLE migrations only for items you explicitly approve.
+1. Legacy views cleanup (views only)
+  - Export CSVs (backup) if applicable
+  - Migration to DROP: accounts, all v_clients_*, v_guardians_*, v_learners_*, v_learner_guardian_summary.
+
 
 Maybe:
 1. Plan for v_invoice_settlements (rollup for later billing).
@@ -248,6 +244,7 @@ Maybe:
 -------------------------
 -- ??? In Progress:: Legacy Table Cleanup --> 
 -------------------------
+
 
 
 

@@ -79,5 +79,12 @@ AEC Development Notes DONE Sep 20 2025
 
 21. Legacy Table and Views cleanup --> Inventory & classify (so we know what to keep/drop), Probe Column Results, Fix Account_Learners (remove is_group) - reflected to changelog, readme, ADR.
 
-23. account_learners - idempotent inserts, sanity files
+#########################################
+## AEC Development Notes DONE Sep 24 2025
+#########################################
 
+22. account_learners - idempotent inserts, sanity files
+
+23. Dropped legacy views: `accounts`, `v_clients_*`, `v_guardians_*`, `v_learners_*`, `v_learner_guardian_summary`.
+
+24. Reinventory and reclassify to the remaining tables and views 
