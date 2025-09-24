@@ -27,7 +27,7 @@ _All notable changes to this project will be documented here._
 
 - Dropped legacy views: `accounts`, `v_clients_*`, `v_guardians_*`, `v_learners_*`, `v_learner_guardian_summary`.
   - Rationale: migrated to `accounts_v2`; legacy model (clients/learners/guardians) deprecated.
-- Dropped legacy view `v_client_lip_summary`
+- Dropped legacy client views: `v_client_lip_summary`, `v_cycle_lip_summary`
 
 ## 2025-09-23
 

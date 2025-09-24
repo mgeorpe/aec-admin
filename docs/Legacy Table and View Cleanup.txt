@@ -1483,3 +1483,10 @@ If you run Step 3a (guardians columns) and paste the result, I’ll give you the
 ~~~~~~
 PROMPT
 ~~~~~~
+
+
+I am not gonna do the Zenith thing. Those are just sample data.
+And hence I didnt verify.
+I also didnt do your backup, drop, verify flow.
+Also didnt do the guardians, learners.
+I expect your answer to be one at a time. I am not really a fan of dealing with multiple entities at given time because when error happens or when I read something stupid from your response, then the whole thing falls apart.
