@@ -242,13 +242,8 @@ Maybe:
 
 
 -------------------------
--- ??? In Progress:: Legacy Table Cleanup --> 
+-- ??? In Progress:: Legacy Table & Views Cleanup --> payer_account_code
 -------------------------
-
-
-
-
-
 
 
 
