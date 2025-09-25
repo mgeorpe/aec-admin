@@ -93,4 +93,22 @@ AEC Development Notes DONE Sep 20 2025
 
 26. Dropped empty legacy table learner_guardians and learners_guardians (0 rows)
 
+27. Repointed `invoices.client_code` FK from `clients(client_code)` to `accounts_v2(account_code)`.
 
+AEC Admin Core Entities as of Moment
+ - accounts_v2
+ - accounts_contacts
+ - accounts_learners
+
+#########################################
+## AEC Development Notes DONE Sep 25 2025
+#########################################
+
+
+########
+RESPONSE
+########
+
+~~~~~~
+PROMPT
+~~~~~~
